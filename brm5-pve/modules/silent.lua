@@ -16,6 +16,7 @@ function TargetSizing:applyTargetSizing(model, character, config, npcManager)
     end
     if not root then return end
 
+    -- Save original values only once (before any modification)
     if not self.originalSizes[model] then
         self.originalSizes[model] = {
             size         = root.Size,
@@ -26,22 +27,17 @@ function TargetSizing:applyTargetSizing(model, character, config, npcManager)
         }
     end
 
-    if root.Size ~= config.TARGET_BOX_SIZE then
-        root.Size = config.TARGET_BOX_SIZE
-    end
+    -- Always re-apply in case config changed (color, transparency, size, part)
+    root.Size = config.TARGET_BOX_SIZE
 
     local targetTransparency = config.showTargetBox and config.TARGET_BOX_TRANSPARENCY or 1
-    if root.Transparency ~= targetTransparency then
-        root.Transparency = targetTransparency
-    end
+    root.Transparency = targetTransparency
 
-    if config.showTargetBox and root.Color ~= config.TARGET_BOX_COLOR then
+    if config.showTargetBox then
         root.Color = config.TARGET_BOX_COLOR
     end
 
-    if not root.CanCollide then
-        root.CanCollide = true
-    end
+    root.CanCollide = true
 end
 
 -- Restores target bounds to their normal size
@@ -66,7 +62,7 @@ end
 
 -- Updates target bounds for all NPCs based on config
 function TargetSizing:updateAllTargets(npcManager, config)
-    if not config.sizingEnabled then
+    if not config.sizingEnabled and not config.showTargetBox then
         if next(self.originalSizes) then
             self:cleanup(npcManager)
         end
