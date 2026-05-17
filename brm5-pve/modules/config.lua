@@ -10,12 +10,11 @@ Config.MARKER_MAX_PER_STEP = 12
 Config.TARGET_SYNC_INTERVAL = 0.25
 Config.NPC_REFRESH_INTERVAL = 0.5
 Config.TARGET_BOX_SIZE = Vector3.new(15, 15, 15) -- Size of the adjusted target bounds
-Config.TARGET_BOX_PART = "HumanoidRootPart"     -- Part used as hitbox anchor
-Config.TARGET_BOX_COLOR = Color3.fromRGB(255, 255, 255) -- Hitbox color
-Config.TARGET_BOX_TRANSPARENCY = 0.85           -- Hitbox transparency (0 = opaque, 1 = invisible)
+Config.TARGET_BOX_TRANSPARENCY = 0.85           -- 0 = opaque, 1 = invisible
 Config.TARGET_BOX_COLOR_R = 255
 Config.TARGET_BOX_COLOR_G = 255
 Config.TARGET_BOX_COLOR_B = 255
+Config.TARGET_BOX_COLOR = Color3.fromRGB(255, 255, 255)
 Config.MAX_NPC_DETECTION_RADIUS = 3000
 Config.npcDetectionRadius = Config.MAX_NPC_DETECTION_RADIUS
 Config.CONFIG_FILE = "brm5_pve_config.json"
@@ -62,20 +61,13 @@ function Config:updateTargetBoxColor(r, g, b)
     self.TARGET_BOX_COLOR = Color3.fromRGB(self.TARGET_BOX_COLOR_R, self.TARGET_BOX_COLOR_G, self.TARGET_BOX_COLOR_B)
 end
 
-function Config:updateTargetBoxTransparency(value)
-    self.TARGET_BOX_TRANSPARENCY = math.clamp(value or self.TARGET_BOX_TRANSPARENCY, 0, 1)
+function Config:updateTargetBoxSize(value)
+    local s = math.clamp(math.floor(value or 15), 1, 60)
+    self.TARGET_BOX_SIZE = Vector3.new(s, s, s)
 end
 
-function Config:updateTargetBoxPart(partName)
-    local allowed = {
-        HumanoidRootPart = true,
-        Head = true,
-        UpperTorso = true,
-        LowerTorso = true,
-    }
-    if allowed[partName] then
-        self.TARGET_BOX_PART = partName
-    end
+function Config:updateTargetBoxTransparency(value)
+    self.TARGET_BOX_TRANSPARENCY = math.clamp(value or 0.85, 0, 1)
 end
 
 function Config:updateNPCDetectionRadius(value)
@@ -107,8 +99,8 @@ function Config:serialize()
         hiddenR = self.hiddenR,
         hiddenG = self.hiddenG,
         hiddenB = self.hiddenB,
-        TARGET_BOX_PART = self.TARGET_BOX_PART,
         TARGET_BOX_TRANSPARENCY = self.TARGET_BOX_TRANSPARENCY,
+        TARGET_BOX_SIZE = self.TARGET_BOX_SIZE.X,
         TARGET_BOX_COLOR_R = self.TARGET_BOX_COLOR_R,
         TARGET_BOX_COLOR_G = self.TARGET_BOX_COLOR_G,
         TARGET_BOX_COLOR_B = self.TARGET_BOX_COLOR_B,
@@ -134,7 +126,7 @@ function Config:applySavedData(data)
     self:updateNPCDetectionRadius(data.npcDetectionRadius)
     self:updateTargetBoxColor(data.TARGET_BOX_COLOR_R, data.TARGET_BOX_COLOR_G, data.TARGET_BOX_COLOR_B)
     if data.TARGET_BOX_TRANSPARENCY ~= nil then self:updateTargetBoxTransparency(data.TARGET_BOX_TRANSPARENCY) end
-    if data.TARGET_BOX_PART ~= nil then self:updateTargetBoxPart(data.TARGET_BOX_PART) end
+    if data.TARGET_BOX_SIZE ~= nil then self:updateTargetBoxSize(data.TARGET_BOX_SIZE) end
 end
 
 function Config:save()
