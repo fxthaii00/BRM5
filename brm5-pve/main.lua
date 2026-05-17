@@ -185,16 +185,14 @@ local callbacks = {
         saveConfig()
     end,
 
-    onTargetBoxPartChange = function(partName)
-        Config:updateTargetBoxPart(partName)
-        -- Cleanup forces restore, then re-apply with the new part
-        TargetSizing:cleanup(NPCManager)
+    onTargetBoxColorChange = function(r, g, b)
+        Config:updateTargetBoxColor(r, g, b)
         TargetSizing:updateAllTargets(NPCManager, Config)
         saveConfig()
     end,
 
-    onTargetBoxColorChange = function(r, g, b)
-        Config:updateTargetBoxColor(r, g, b)
+    onTargetBoxSizeChange = function(value)
+        Config:updateTargetBoxSize(value)
         TargetSizing:updateAllTargets(NPCManager, Config)
         saveConfig()
     end,
