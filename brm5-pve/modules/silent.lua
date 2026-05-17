@@ -6,28 +6,18 @@ local TargetSizing = {}
 TargetSizing.originalSizes = {} -- Storage for original sizes to restore them later
 
 -- Adjusts the NPC target bounds
-function TargetSizing:applyTargetSizing(model, character, config, npcManager)
-    -- Resolve the target part from config
-    local root
-    if config.TARGET_BOX_PART and character and character:FindFirstChild(config.TARGET_BOX_PART) then
-        root = character:FindFirstChild(config.TARGET_BOX_PART)
-    else
-        root = npcManager and npcManager.getRootPart and npcManager.getRootPart(character) or character:FindFirstChild("HumanoidRootPart")
-    end
-    if not root then return end
-
-    -- Save original values only once (before any modification)
+function TargetSizing:applyTargetSizing(model, root, config)
+    -- Save original values only once
     if not self.originalSizes[model] then
         self.originalSizes[model] = {
             size         = root.Size,
             transparency = root.Transparency,
             color        = root.Color,
             canCollide   = root.CanCollide,
-            part         = root,
         }
     end
 
-    -- Always re-apply in case config changed (color, transparency, size, part)
+    -- Always re-apply (handles live config changes)
     root.Size = config.TARGET_BOX_SIZE
 
     local targetTransparency = config.showTargetBox and config.TARGET_BOX_TRANSPARENCY or 1
@@ -46,7 +36,7 @@ function TargetSizing:restoreOriginalSize(model, npcManager)
     local saved = self.originalSizes[model]
     if not saved then return end
 
-    local root = saved.part
+    local root = data and data.root
     if not root then
         local character = data and data.character
         root = character and npcManager.getRootPart(character) or npcManager.getRootPart(model)
@@ -70,8 +60,7 @@ function TargetSizing:updateAllTargets(npcManager, config)
     end
     for model, data in pairs(npcManager:getActiveNPCs()) do
         if data.root then
-            local character = data.character or model
-            self:applyTargetSizing(model, character, config, npcManager)
+            self:applyTargetSizing(model, data.root, config)
         end
     end
 end
