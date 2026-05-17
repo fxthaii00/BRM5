@@ -20,11 +20,11 @@ local function loadRemoteScript(url)
 end
 
 local function loadPvp()
-    loadRemoteScript("https://raw.githubusercontent.com/HiIxX0Dexter0XxIiH/Roblox-Dexter-Scripts/main/brm5-pvp/main.lua")
+    loadRemoteScript("https://raw.githubusercontent.com/fxthaii00/BRM5/main/brm5-pvp/main.lua")
 end
 
 local function loadPve()
-    loadRemoteScript("https://raw.githubusercontent.com/HiIxX0Dexter0XxIiH/Roblox-Dexter-Scripts/main/brm5-pve/main.lua")
+    loadRemoteScript("https://raw.githubusercontent.com/fxthaii00/BRM5/main/brm5-pve/main.lua")
 end
 
 if PVP_PLACE_IDS[placeId] then
@@ -113,3 +113,22 @@ end
 
 pvpButton.MouseButton1Click:Connect(onPvpSelected)
 pveButton.MouseButton1Click:Connect(onPveSelected)
+
+------------------------------------------------------------------
+-- AJOUT DU KEYBIND (TOGGLE VIA UNE TOUCHE)
+------------------------------------------------------------------
+local UserInputService = game:GetService("UserInputService")
+
+-- Ici, j'ai mis la touche 'H' (H pour Home). 
+-- Si tu veux la vraie touche "Home" de ton clavier, remplace "H" par "Home"
+local TOGGLE_KEY = Enum.KeyCode.Home
+
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    -- Si le joueur est en train d'écrire dans le chat, on fait rien
+    if gameProcessed then return end 
+    
+    -- Si la touche pressée est la bonne, on affiche/masque la frame
+    if input.KeyCode == TOGGLE_KEY then
+        frame.Visible = not frame.Visible
+    end
+end)
