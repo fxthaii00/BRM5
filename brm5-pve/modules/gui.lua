@@ -358,7 +358,7 @@ function GUI:init(services, config, callbacks)
     end, nil, services)
 
     createLabel(tabCombat, "-- HITBOX SIZE --", Color3.fromRGB(85, 170, 255))
-    createSlider(tabCombat, "Size", config.TARGET_BOX_SIZE.X, 60, function(v)
+    createSlider(tabCombat, "Size", config.TARGET_BOX_SIZE.X, 20, function(v)
         if callbacks.onTargetBoxSizeChange then callbacks.onTargetBoxSizeChange(v) end
     end, nil, services)
 
@@ -467,6 +467,19 @@ function GUI:init(services, config, callbacks)
     addCredit("Made by: HiIxX0Dexter0XxIiH", "GothamBold", 24)
     addLinkButton("GitHub", "https://github.com/HiIxX0Dexter0XxIiH/Roblox-Dexter-Scripts", Color3.fromRGB(45, 95, 160))
     addLinkButton("Reddit", "https://www.reddit.com/r/BRM5Scripts/", Color3.fromRGB(185, 75, 45))
+
+    -- RESET BUTTON
+    local rst = Instance.new("TextButton", sidebar)
+    rst.Size = UDim2.new(0, 110, 0, 35)
+    rst.AnchorPoint = Vector2.new(0.5, 0)
+    rst.Position = UDim2.new(0.5, 0, 0, 0)
+    rst.Text = "Reset Config"
+    rst.BackgroundColor3 = Color3.fromRGB(180, 120, 20)
+    rst.TextColor3 = Color3.new(1, 1, 1)
+    Instance.new("UICorner", rst)
+    rst.MouseButton1Click:Connect(function()
+        if callbacks.onReset then callbacks.onReset() end
+    end)
 
     -- UNLOAD BUTTON
     local unl = Instance.new("TextButton", sidebar)
