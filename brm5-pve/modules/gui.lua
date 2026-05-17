@@ -345,6 +345,61 @@ function GUI:init(services, config, callbacks)
     createButton(tabCombat, "Silent 🎯", config.sizingEnabled, callbacks.onSizingToggle)
     createButton(tabCombat, "Show HitBox", config.showTargetBox, callbacks.onShowTargetBoxToggle)
 
+    -- HitBox Part Selector
+    createLabel(tabCombat, "-- HITBOX PART --", Color3.fromRGB(85, 170, 255))
+    local partOptions = { "HumanoidRootPart", "Head", "UpperTorso", "LowerTorso" }
+    local partButtons = {}
+    local partRow = Instance.new("Frame", tabCombat)
+    partRow.Size = UDim2.new(1, -10, 0, 35)
+    partRow.BackgroundTransparency = 1
+    local partRowLayout = Instance.new("UIListLayout", partRow)
+    partRowLayout.FillDirection = Enum.FillDirection.Horizontal
+    partRowLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    partRowLayout.Padding = UDim.new(0, 4)
+
+    for _, partName in ipairs(partOptions) do
+        local pb = Instance.new("TextButton", partRow)
+        pb.Size = UDim2.new(0, 80, 1, 0)
+        local isActive = config.TARGET_BOX_PART == partName
+        pb.BackgroundColor3 = isActive and Color3.fromRGB(85, 170, 255) or Color3.fromRGB(35, 35, 35)
+        pb.TextColor3 = isActive and Color3.new(0, 0, 0) or Color3.new(1, 1, 1)
+        pb.Font = "Gotham"
+        pb.TextSize = 11
+        pb.Text = partName == "HumanoidRootPart" and "Root" or partName
+        Instance.new("UICorner", pb)
+        partButtons[partName] = pb
+
+        pb.MouseButton1Click:Connect(function()
+            for _, btn in pairs(partButtons) do
+                btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+                btn.TextColor3 = Color3.new(1, 1, 1)
+            end
+            pb.BackgroundColor3 = Color3.fromRGB(85, 170, 255)
+            pb.TextColor3 = Color3.new(0, 0, 0)
+            if callbacks.onTargetBoxPartChange then
+                callbacks.onTargetBoxPartChange(partName)
+            end
+        end)
+    end
+
+    -- HitBox Color
+    createLabel(tabCombat, "-- HITBOX COLOR --", Color3.fromRGB(85, 170, 255))
+    createSlider(tabCombat, "R", config.TARGET_BOX_COLOR_R, 255, function(v)
+        if callbacks.onTargetBoxColorChange then callbacks.onTargetBoxColorChange(v, nil, nil) end
+    end, nil, services)
+    createSlider(tabCombat, "G", config.TARGET_BOX_COLOR_G, 255, function(v)
+        if callbacks.onTargetBoxColorChange then callbacks.onTargetBoxColorChange(nil, v, nil) end
+    end, nil, services)
+    createSlider(tabCombat, "B", config.TARGET_BOX_COLOR_B, 255, function(v)
+        if callbacks.onTargetBoxColorChange then callbacks.onTargetBoxColorChange(nil, nil, v) end
+    end, nil, services)
+
+    -- HitBox Transparency
+    createLabel(tabCombat, "-- HITBOX TRANSPARENCY --", Color3.fromRGB(85, 170, 255))
+    createSlider(tabCombat, "Transparency", math.floor(config.TARGET_BOX_TRANSPARENCY * 100), 100, function(v)
+        if callbacks.onTargetBoxTransparencyChange then callbacks.onTargetBoxTransparencyChange(v / 100) end
+    end, nil, services)
+
     -- VISUALS TAB
     createButton(tabVisuals, "Walls 🔎", config.highlightEnabled, callbacks.onHighlightsToggle)
     createButton(tabVisuals, "FullBright 💡", config.fullBrightEnabled, callbacks.onFullBrightToggle)
