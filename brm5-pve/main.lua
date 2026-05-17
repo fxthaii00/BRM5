@@ -185,6 +185,26 @@ local callbacks = {
         saveConfig()
     end,
 
+    onTargetBoxPartChange = function(partName)
+        Config:updateTargetBoxPart(partName)
+        -- Cleanup forces restore, then re-apply with the new part
+        TargetSizing:cleanup(NPCManager)
+        TargetSizing:updateAllTargets(NPCManager, Config)
+        saveConfig()
+    end,
+
+    onTargetBoxColorChange = function(r, g, b)
+        Config:updateTargetBoxColor(r, g, b)
+        TargetSizing:updateAllTargets(NPCManager, Config)
+        saveConfig()
+    end,
+
+    onTargetBoxTransparencyChange = function(value)
+        Config:updateTargetBoxTransparency(value)
+        TargetSizing:updateAllTargets(NPCManager, Config)
+        saveConfig()
+    end,
+
     onVisibilityToggle = function()
         toggleGUIVisibility()
     end,
